@@ -20,6 +20,19 @@ var drowStatisticsCloud = function (ctx, x, y, width, heigth, offset, color) {
   ctx.fill();
 };
 
+// выбор цвета столбца гистограммы
+// если игрок 'Вы' столбец красный, в противном случае в оттенках синего
+// со случайным значением насыщености
+var histogramColumnColor = function (name) {
+  var histogramColMeColor = 'rgba(255, 0, 0, 1)'; // цвет столбца игрока 'Вы'
+
+  if (name === 'Вы') {
+    return histogramColMeColor;
+  } else {
+    return 'hsl(240,' + (Math.floor(Math.random() * 76) + 10).toString() + '%, 25%)';
+  }
+};
+
 // функция renderStatistics выводит данные статистики в виде гистограмы
 // результат, имя игрока - затраченное время
 window.renderStatistics = function (ctx, names, times) {
@@ -31,17 +44,32 @@ window.renderStatistics = function (ctx, names, times) {
   var histogramColCurrentY; // положение по у текущего столбца
   var columnStartPointX = 150; // положение по х текущего столбца
   var maxTimePoints = 0; // максимальное значение из массива times[], показателя времени
-  var textHistogramDistance = 20; // растояние от верхней границы подписи, до столбца гистограммы
+  var cloudStartX = 100; // положение по х основания для вывода статистики
+  var cloudStartY = 10; // положение по у основания для вывода статистики
+  var cloudWidth = 420; // ширина основания для вывода статистики
+  var cloudHeigth = 270; // высота основания для вывода статистики
+  var cloudOffset = 10; // изгиб сторон многоугольника основания для вывода статистики
+  var cloudColor = 'rgb(255, 255, 255)'; // цвет основания для вывода статистики
+  var cloudShadowStartX = cloudStartX + 10; // положение по х тени
+  var cloudShadowStartY = cloudStartY + 10; // положение по у тени
+  var cloudShadowColor = 'rgba(0, 0, 0, 0.7)'; // цвет тени
+  var textColor = 'rgb(0, 0, 0)'; // цвет текста
+  var headerTextStartX = 220; // заголовок положение по х
+  var headerTextStartY = 30; // заголовок положение по у
+  var textlineHeigth = 20; // расстояние между строками текста
+  var textNamesStartY = 250; // положение по у строки с именами игроков
 
-  drowStatisticsCloud(ctx, 110, 20, 420, 270, 10, 'rgba(0, 0, 0, 0.7)');
-  drowStatisticsCloud(ctx, 100, 10, 420, 270, 10, 'rgb(255, 255, 255');
+
+  drowStatisticsCloud(ctx, cloudShadowStartX, cloudShadowStartY, cloudWidth, cloudHeigth, cloudOffset, cloudShadowColor);
+  drowStatisticsCloud(ctx, cloudStartX, cloudStartY, cloudWidth, cloudHeigth, cloudOffset, cloudColor);
 
   // вывод заголовка экрана статистики
-  ctx.fillStyle = 'rgb(0, 0, 0)';
+  ctx.fillStyle = textColor;
   ctx.font = '16px PT Mono';
   ctx.textBaseline = 'hanging';
-  ctx.fillText('Ура вы победили!', 220, 30);
-  ctx.fillText('Список результатов:', 220, 50);
+  ctx.fillText('Ура вы победили!', headerTextStartX, headerTextStartY);
+  headerTextStartY = headerTextStartY + textlineHeigth;
+  ctx.fillText('Список результатов:', headerTextStartX, headerTextStartY);
 
   // максимальное значение времени игроков
   for (var y = 0; y < times.length; y++) {
@@ -51,24 +79,17 @@ window.renderStatistics = function (ctx, names, times) {
   }
 
   for (var i = 0; i < names.length; i++) {
-    ctx.fillStyle = 'rgb(0, 0, 0)';
-    ctx.fillText(names[i], columnStartPointX, 250);
+    ctx.fillStyle = textColor;
+    ctx.fillText(names[i], columnStartPointX, textNamesStartY);
 
-    // выбор цвета столбца гистограммы
-    // если игрок 'Вы' столбец красный, в противном случае в оттенках синего
-    // со случайным значением насыщености
-    if (names[i] === 'Вы') {
-      ctx.fillStyle = 'rgba(255, 0, 0, 1)';
-    } else {
-      ctx.fillStyle = 'hsl(240,' + (Math.floor(Math.random() * 76) + 25).toString() + '%, 25%)';
-    }
+    ctx.fillStyle = histogramColumnColor(names[i]);
 
     histogramColHeigth = (times[i] * histogramColMaxHeigth) / maxTimePoints;
     histogramColCurrentY = histogramColStartY + (histogramColMaxHeigth - histogramColHeigth);
     ctx.fillRect(columnStartPointX, histogramColCurrentY, histogramColWidth, histogramColHeigth);
 
-    ctx.fillStyle = 'rgb(0, 0, 0)';
-    ctx.fillText(Math.round(times[i]), columnStartPointX, histogramColCurrentY - textHistogramDistance);
+    ctx.fillStyle = textColor;
+    ctx.fillText(Math.round(times[i]), columnStartPointX, histogramColCurrentY - textlineHeigth);
     columnStartPointX = columnStartPointX + columnSpacing + histogramColWidth;
   }
 };
