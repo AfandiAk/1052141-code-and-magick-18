@@ -33,6 +33,19 @@ var histogramColumnColor = function (name) {
   }
 };
 
+// максимальное значение времени игроков
+var getMaxTimePoints = function (times) {
+  var maxTimePoints = 0;
+
+  for (var y = 0; y < times.length; y++) {
+    if (maxTimePoints < times[y]) {
+      maxTimePoints = times[y];
+    }
+  }
+  return maxTimePoints;
+};
+
+
 // функция renderStatistics выводит данные статистики в виде гистограмы
 // результат, имя игрока - затраченное время
 window.renderStatistics = function (ctx, names, times) {
@@ -43,7 +56,7 @@ window.renderStatistics = function (ctx, names, times) {
   var histogramColStartY = 90; // положение по y самого высокого столбца
   var histogramColCurrentY; // положение по у текущего столбца
   var columnStartPointX = 150; // положение по х текущего столбца
-  var maxTimePoints = 0; // максимальное значение из массива times[], показателя времени
+  var maxTimePoints; // максимальное значение из массива times[], показателя времени
   var cloudStartX = 100; // положение по х основания для вывода статистики
   var cloudStartY = 10; // положение по у основания для вывода статистики
   var cloudWidth = 420; // ширина основания для вывода статистики
@@ -71,12 +84,8 @@ window.renderStatistics = function (ctx, names, times) {
   headerTextStartY = headerTextStartY + textlineHeigth;
   ctx.fillText('Список результатов:', headerTextStartX, headerTextStartY);
 
-  // максимальное значение времени игроков
-  for (var y = 0; y < times.length; y++) {
-    if (maxTimePoints < times[y]) {
-      maxTimePoints = times[y];
-    }
-  }
+
+  maxTimePoints = getMaxTimePoints(times);
 
   for (var i = 0; i < names.length; i++) {
     ctx.fillStyle = textColor;
