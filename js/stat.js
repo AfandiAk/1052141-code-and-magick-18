@@ -61,45 +61,46 @@ window.renderStatistics = function (ctx, names, times) {
   var CLOUD_WIDTH = 420; // ширина основания для вывода статистики
   var CLOUD_HEGTH = 270; // высота основания для вывода статистики
   var CLOUD_OFFSET = 10; // изгиб сторон многоугольника основания для вывода статистики
-  var CLOUD_COLOR = 'rgb(255, 255, 255)'; // цвет основания для вывода статистики
-  var TEXT_COLOR = 'rgb(0, 0, 0)'; // цвет текста
   var HISTOGRAM_COLUMN_WIDTH = 40; // ширина столбца гистограммы
   var HISTOGRAM_COLUMN_MAX_HEIGTH = 150; // максимальная высота столбца
+  var HISTOGRAM_COL_START_Y = 90; // положение по y самого высокого столбца
   var COLUMN_SPACING = 50; // растояние между столбцами гистограммы
+  var HEADER_TEXT_START_X = 220; // заголовок положение по х
+  var HEADER_TEXT_START_Y = 30; // заголовок положение по у
+  var TEXT_LINE_HEGTH = 20; // расстояние между строками текста
+  var TEXT_NAMES_START_Y = 250; // положение по у строки с именами игроков
   var histogramColHeigth; // высота текущего столбца гистограммы
-  var histogramColStartY = 90; // положение по y самого высокого столбца
   var histogramColCurrentY; // положение по у текущего столбца
   var columnStartPointX = 150; // положение по х текущего столбца
   var maxTimePoints; // максимальное значение из массива times[], показателя времени
+  var cloudColor = 'rgb(255, 255, 255)'; // цвет основания для вывода статистики
+  var textColor = 'rgb(0, 0, 0)'; // цвет текста
   var cloudShadowStartX = CLOUD_START_X + 10; // положение по х тени
   var cloudShadowStartY = CLOUD_START_Y + 10; // положение по у тени
   var cloudShadowColor = 'rgba(0, 0, 0, 0.7)'; // цвет тени
-  var headerTextStartX = 220; // заголовок положение по х
-  var headerTextStartY = 30; // заголовок положение по у
-  var textlineHeigth = 20; // расстояние между строками текста
-  var textNamesStartY = 250; // положение по у строки с именами игроков
+
 
   drowStatisticsCloud(ctx, cloudShadowStartX, cloudShadowStartY, CLOUD_WIDTH, CLOUD_HEGTH, CLOUD_OFFSET, cloudShadowColor);
-  drowStatisticsCloud(ctx, CLOUD_START_X, CLOUD_START_Y, CLOUD_WIDTH, CLOUD_HEGTH, CLOUD_OFFSET, CLOUD_COLOR);
+  drowStatisticsCloud(ctx, CLOUD_START_X, CLOUD_START_Y, CLOUD_WIDTH, CLOUD_HEGTH, CLOUD_OFFSET, cloudColor);
 
   // вывод заголовка экрана статистики
-  printStatisticsHeader(ctx, 'Ура вы победили!', TEXT_COLOR, headerTextStartX, headerTextStartY);
-  headerTextStartY = headerTextStartY + textlineHeigth;
-  printStatisticsHeader(ctx, 'Список результатов:', TEXT_COLOR, headerTextStartX, headerTextStartY);
+  printStatisticsHeader(ctx, 'Ура вы победили!', textColor, HEADER_TEXT_START_X, HEADER_TEXT_START_Y);
+  HEADER_TEXT_START_Y = HEADER_TEXT_START_Y + TEXT_LINE_HEGTH;
+  printStatisticsHeader(ctx, 'Список результатов:', textColor, HEADER_TEXT_START_X, HEADER_TEXT_START_Y);
 
   maxTimePoints = getMaxTimePoints(times);
 
   for (var i = 0; i < names.length; i++) {
-    ctx.fillStyle = TEXT_COLOR;
-    ctx.fillText(names[i], columnStartPointX, textNamesStartY);
+    ctx.fillStyle = textColor;
+    ctx.fillText(names[i], columnStartPointX, TEXT_NAMES_START_Y);
     ctx.fillStyle = histogramColumnColor(names[i]);
 
     histogramColHeigth = (times[i] * HISTOGRAM_COLUMN_MAX_HEIGTH) / maxTimePoints;
-    histogramColCurrentY = histogramColStartY + (HISTOGRAM_COLUMN_MAX_HEIGTH - histogramColHeigth);
+    histogramColCurrentY = HISTOGRAM_COL_START_Y + (HISTOGRAM_COLUMN_MAX_HEIGTH - histogramColHeigth);
     ctx.fillRect(columnStartPointX, histogramColCurrentY, HISTOGRAM_COLUMN_WIDTH, histogramColHeigth);
 
-    ctx.fillStyle = TEXT_COLOR;
-    ctx.fillText(Math.round(times[i]), columnStartPointX, histogramColCurrentY - textlineHeigth);
+    ctx.fillStyle = textColor;
+    ctx.fillText(Math.round(times[i]), columnStartPointX, histogramColCurrentY - TEXT_LINE_HEGTH);
     columnStartPointX = columnStartPointX + COLUMN_SPACING + HISTOGRAM_COLUMN_WIDTH;
   }
 };
